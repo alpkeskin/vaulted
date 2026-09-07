@@ -11,7 +11,7 @@ use crate::error::{CryptoError, Result};
 /// failure is never swallowed: a caller that cannot get randomness must abort
 /// the operation rather than continue with a predictable nonce or key.
 pub fn fill_random(buf: &mut [u8]) -> Result<()> {
-    getrandom::getrandom(buf).map_err(|_| CryptoError::Rng)
+    getrandom::fill(buf).map_err(|_| CryptoError::Rng)
 }
 
 #[cfg(test)]

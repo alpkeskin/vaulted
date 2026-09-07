@@ -10,7 +10,7 @@ Your database only ever holds ciphertext — and the keys never go near it.
 [![CI](https://github.com/alpkeskin/vaulted/actions/workflows/ci.yml/badge.svg)](https://github.com/alpkeskin/vaulted/actions/workflows/ci.yml)
 [![Crates.io](https://img.shields.io/crates/v/vaulted-core.svg?logo=rust)](https://crates.io/crates/vaulted-core)
 [![Docs.rs](https://img.shields.io/docsrs/vaulted-core?logo=docsdotrs)](https://docs.rs/vaulted-core)
-[![MSRV](https://img.shields.io/badge/MSRV-1.85-blue?logo=rust)](#compatibility)
+[![MSRV](https://img.shields.io/badge/MSRV-1.89-blue?logo=rust)](#compatibility)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 [Quick start](#-quick-start) ·
@@ -354,12 +354,13 @@ Rust's orphan rule puts them there.
 
 | | Rust | Why |
 |---|:-:|---|
-| workspace | **1.85** | the highest MSRV among dependencies; CI builds against it |
-| `sqlx-0_8` | **1.88** | its tree reaches `url` → `idna` → `icu_*` |
+| workspace | **1.89** | the highest MSRV among dependencies; CI builds against it |
 | `sqlx-0_9` | **1.94** | declared by the crate |
 
-Neither sqlx feature is on by default, so they raise the floor only for a build
-that asks for them. Both lines are carried because a trait impl belongs to the
+The workspace floor comes from `aes-gcm` 0.11, whose tree reaches `aes` 0.9.
+`sqlx-0_8` needs 1.88 and so no longer raises it; `sqlx-0_9` still does, and it
+is not on by default, so it raises the floor only for a build that asks for
+it. Both lines are carried because a trait impl belongs to the
 exact crate version that defined the trait: one built against 0.8 is invisible
 to an application on 0.9, and the feature would compile while doing nothing.
 
