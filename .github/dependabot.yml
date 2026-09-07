@@ -12,6 +12,13 @@ updates:
     directory: /fuzz
     schedule:
       interval: monthly
+    # The fuzz package reaches the rest of the tree through a path dependency,
+    # so anything but its own direct dependency is already covered by the root
+    # entry above -- and an update opened from here edits the workspace
+    # manifest while regenerating only fuzz/Cargo.lock, which leaves the two
+    # lockfiles disagreeing.
+    allow:
+      - dependency-name: libfuzzer-sys
   - package-ecosystem: github-actions
     directory: /
     schedule:
