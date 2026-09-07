@@ -115,10 +115,7 @@ fn main() -> Result<()> {
 
     let value = vault.encrypt("users.email", "alp@example.com")?;
     println!("encrypted under {}", value.key_id());
-    println!(
-        "plaintext       {}",
-        &*vault.decrypt("users.email", &value)?
-    );
+    println!("plaintext       {}", *vault.decrypt("users.email", &value)?);
 
     // A value naming a key the provider cannot resolve fails loudly, and names
     // the key so an operator can fix the configuration.
