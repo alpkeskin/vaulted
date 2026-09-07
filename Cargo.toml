@@ -56,7 +56,7 @@ bytes = "1"
 sqlx-0_8 = { package = "sqlx", version = "0.8", default-features = false, features = ["postgres"] }
 sqlx-0_9 = { package = "sqlx", version = "0.9", default-features = false, features = ["postgres"] }
 
-syn = "2"
+syn = "3"
 quote = "1"
 proc-macro2 = "1"
 
