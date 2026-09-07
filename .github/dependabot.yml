@@ -16,3 +16,7 @@ updates:
     directory: /
     schedule:
       interval: monthly
+    ignore:
+      # The MSRV job pins this action to the Rust version it tests, not to an
+      # action release. A bump here would silently raise the supported floor.
+      - dependency-name: dtolnay/rust-toolchain
