@@ -23,8 +23,8 @@
 //! runtime of its own. The sqlx features take `sqlx` with no runtime, no TLS
 //! and no macros. They name a version because a trait impl applies only to the
 //! sqlx that defined the trait: built against the wrong one, the feature
-//! compiles and then does nothing. Both raise the minimum supported Rust
-//! version — see the crate README.
+//! compiles and then does nothing. `sqlx-0_9` raises the minimum supported
+//! Rust version to 1.94 — see the crate README.
 //!
 //! ```ignore
 //! use vaulted_postgres::{ddl, Vaulted, VaultedSchema};
