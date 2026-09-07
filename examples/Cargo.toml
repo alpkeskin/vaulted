@@ -1,0 +1,40 @@
+[package]
+name = "vaulted-examples"
+description = "Runnable examples for Vaulted"
+publish = false
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[dependencies]
+vaulted-core = { workspace = true, features = ["local-provider", "xchacha"] }
+
+vaulted-postgres = { workspace = true, optional = true }
+
+[features]
+# The derive example is the only target that needs the macro and the PostgreSQL
+# glue, so neither is compiled into the path the other examples take.
+derive = ["vaulted-core/derive", "dep:vaulted-postgres"]
+
+# The package holds nothing but examples, so each one is declared explicitly.
+[[example]]
+name = "derive"
+path = "derive.rs"
+required-features = ["derive"]
+
+[[example]]
+name = "basic"
+path = "basic.rs"
+
+[[example]]
+name = "postgres_workflow"
+path = "postgres_workflow.rs"
+
+[[example]]
+name = "key_rotation"
+path = "key_rotation.rs"
+
+[[example]]
+name = "custom_key_provider"
+path = "custom_key_provider.rs"

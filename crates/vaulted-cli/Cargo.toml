@@ -1,0 +1,23 @@
+[package]
+name = "vaulted-cli"
+description = "Command line tooling for Vaulted: keyring management, inspection and key rotation"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+authors.workspace = true
+keywords.workspace = true
+categories.workspace = true
+
+[[bin]]
+name = "vaulted"
+path = "src/main.rs"
+
+[dependencies]
+vaulted-core = { workspace = true, features = ["local-provider", "xchacha"] }
+clap.workspace = true
+
+[lints.rust]
+unsafe_code = "forbid"

@@ -1,0 +1,40 @@
+[package]
+name = "vaulted-fuzz"
+description = "Fuzz targets for Vaulted's hostile-input surfaces"
+version = "0.0.0"
+publish = false
+edition = "2021"
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+libfuzzer-sys = "0.4"
+vaulted-core = { path = "../crates/vaulted-core", features = ["local-provider"] }
+
+[[bin]]
+name = "parse_ciphertext"
+path = "fuzz_targets/parse_ciphertext.rs"
+test = false
+doc = false
+
+[[bin]]
+name = "decrypt"
+path = "fuzz_targets/decrypt.rs"
+test = false
+doc = false
+
+[[bin]]
+name = "parse_blind_index"
+path = "fuzz_targets/parse_blind_index.rs"
+test = false
+doc = false
+
+[[bin]]
+name = "parse_keyring"
+path = "fuzz_targets/parse_keyring.rs"
+test = false
+doc = false
+
+[profile.release]
+debug = true

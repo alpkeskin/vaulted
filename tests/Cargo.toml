@@ -1,0 +1,34 @@
+[package]
+name = "vaulted-tests"
+description = "Cross-crate integration, property and hostile-input tests for Vaulted"
+publish = false
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[dev-dependencies]
+vaulted-core = { workspace = true, features = ["local-provider", "serde", "xchacha", "derive"] }
+serde_json.workspace = true
+vaulted-postgres = { workspace = true, default-features = false }
+
+# The package exists only to hold tests, so every target is declared explicitly.
+[[test]]
+name = "derive"
+path = "derive.rs"
+
+[[test]]
+name = "vertical_slice"
+path = "vertical_slice.rs"
+
+[[test]]
+name = "rotation"
+path = "rotation.rs"
+
+[[test]]
+name = "hostile_input"
+path = "hostile_input.rs"
+
+[[test]]
+name = "properties"
+path = "properties.rs"

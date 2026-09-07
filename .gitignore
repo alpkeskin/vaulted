@@ -1,0 +1,15 @@
+/target
+**/*.rs.bk
+Cargo.lock.orig
+
+# Never commit key material. These patterns are a safety net, not a guarantee.
+*.keys.json
+vaulted.keys*
+*.keyring.json
+.env
+.env.*
+
+# fuzzing artifacts
+fuzz/target
+fuzz/corpus
+fuzz/artifacts

@@ -1,0 +1,111 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+env:
+  CARGO_TERM_COLOR: always
+  RUSTFLAGS: -D warnings
+
+jobs:
+  test:
+    name: test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo test --workspace --all-targets
+      - run: cargo test --workspace --doc
+      - name: examples still run
+        run: |
+          for example in basic postgres_workflow key_rotation custom_key_provider; do
+            cargo run -q -p vaulted-examples --example "$example" > /dev/null
+          done
+          # The derive example needs the macro and the PostgreSQL glue, which
+          # the other examples deliberately do not compile.
+          cargo run -q -p vaulted-examples --example derive --features derive > /dev/null
+
+  features:
+    name: feature combinations
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      # A feature flag that is never built without is a feature flag that will
+      # eventually stop compiling.
+      - run: cargo test -p vaulted-crypto --no-default-features
+      - run: cargo test -p vaulted-crypto --all-features
+      - run: cargo test -p vaulted-core --no-default-features
+      - run: cargo test -p vaulted-core --no-default-features --features serde
+      - run: cargo test -p vaulted-core --no-default-features --features derive
+      - run: cargo test -p vaulted-core --no-default-features --features postgres
+      - run: cargo test -p vaulted-core --all-features
+      # Both sqlx lines, separately: the impls are per-version, so "it compiles
+      # against 0.8" says nothing about 0.9.
+      - run: cargo test -p vaulted-core --no-default-features --features "derive,sqlx-0_8"
+      - run: cargo test -p vaulted-core --no-default-features --features "derive,sqlx-0_9"
+      - run: cargo test -p vaulted-postgres --no-default-features
+      - run: cargo test -p vaulted-postgres --no-default-features --features "derive,sqlx-0_8"
+      - run: cargo test -p vaulted-postgres --no-default-features --features "derive,sqlx-0_9"
+      - run: cargo test -p vaulted-postgres --all-features
+
+  lint:
+    name: fmt and clippy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo fmt --all --check
+      - run: cargo clippy --workspace --all-targets --all-features
+
+  msrv:
+    name: minimum supported Rust version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@1.85.0
+      - uses: Swatinem/rust-cache@v2
+      # Every feature except the sqlx ones, which have MSRVs of their own:
+      # sqlx 0.8 reaches url -> idna -> icu_*, which need Rust 1.88, and sqlx
+      # 0.9 declares 1.94. Enabling either here would test sqlx's floor rather
+      # than ours. See README.md.
+      - run: cargo check --workspace --all-targets
+      - run: cargo check -p vaulted-core --features "derive,postgres,serde"
+
+  fuzz:
+    name: fuzz (smoke)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@nightly
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo install cargo-fuzz
+      # Short runs on every PR; the point is to catch a target that stopped
+      # building, not to find bugs in five minutes.
+      - name: run each target briefly
+        working-directory: fuzz
+        run: |
+          for target in parse_ciphertext decrypt parse_blind_index parse_keyring; do
+            cargo +nightly fuzz run "$target" -- -max_total_time=60
+          done
+
+  audit:
+    name: dependency audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: rustsec/audit-check@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}

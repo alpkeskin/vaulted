@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 🔐 Report a security vulnerability
+    url: https://github.com/alpkeskin/vaulted/security/advisories/new
+    about: Please report vulnerabilities privately — never in a public issue.
+  - name: 💬 Questions and ideas
+    url: https://github.com/alpkeskin/vaulted/discussions
+    about: Usage questions, design discussion and anything not yet a bug.
+  - name: 📚 Documentation
+    url: https://github.com/alpkeskin/vaulted/tree/main/docs
+    about: Threat model, ciphertext format, blind indexes, key management.

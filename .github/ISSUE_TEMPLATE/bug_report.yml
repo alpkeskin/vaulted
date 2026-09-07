@@ -1,0 +1,53 @@
+name: 🐛 Bug report
+description: Something behaves differently than documented
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report. **If this is a security vulnerability, stop here**
+        and follow [SECURITY.md](../blob/main/SECURITY.md) instead.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What did you expect, and what did you get instead?
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Reproduction
+      description: The smallest snippet that shows it. Please redact real keys and plaintext.
+      render: rust
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Vaulted version
+      placeholder: "vaulted-core 0.1.0"
+    validations:
+      required: true
+  - type: input
+    id: rust
+    attributes:
+      label: Rust version
+      placeholder: "output of `rustc -V`"
+    validations:
+      required: true
+  - type: input
+    id: platform
+    attributes:
+      label: Platform
+      placeholder: "e.g. macOS 15 aarch64, Ubuntu 24.04 x86-64"
+  - type: input
+    id: features
+    attributes:
+      label: Enabled features
+      placeholder: "e.g. derive, sqlx-0_8"
+  - type: textarea
+    id: logs
+    attributes:
+      label: Error output
+      render: shell
