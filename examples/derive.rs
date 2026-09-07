@@ -132,7 +132,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // And what comes back is what went in, capitals and all.
     let decrypted = vault.decrypt(User::EMAIL_FIELD, &email.ciphertext)?;
-    println!("  decrypted: {}", &*decrypted);
+    println!("  decrypted: {}", *decrypted);
     assert_eq!(&*decrypted, &user.email);
 
     // The phone is an Option, so its columns are nullable; nothing is written

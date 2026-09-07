@@ -69,7 +69,7 @@ fn main() -> Result<(), Error> {
     // Old rows are readable throughout: each names the key it needs.
     for row in &rows {
         let email = vault.decrypt_str("users.email", &row.email_ciphertext)?;
-        println!("  row {} still reads as {}", row.id, &*email);
+        println!("  row {} still reads as {}", row.id, *email);
     }
 
     // A write during the rotation lands on the new key straight away.
@@ -125,7 +125,7 @@ fn main() -> Result<(), Error> {
         println!(
             "  row {} -> {} ({})",
             row.id,
-            &*email,
+            *email,
             key_of(&row.email_ciphertext)?
         );
     }

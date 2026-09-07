@@ -115,7 +115,7 @@ fn main() -> Result<(), Error> {
     match users.find_by_email(&vault, "DENIZ@Example.com")? {
         Some(row) => {
             let email = vault.decrypt_str("users.email", &row.email_ciphertext)?;
-            println!("found id={} name={} email={}", row.id, row.name, &*email);
+            println!("found id={} name={} email={}", row.id, row.name, *email);
         }
         None => println!("no such user"),
     }
@@ -143,7 +143,7 @@ fn main() -> Result<(), Error> {
     }
     println!(
         "stored value comes back as typed: {}",
-        &*vault.decrypt("users.phone", &stored.ciphertext)?
+        *vault.decrypt("users.phone", &stored.ciphertext)?
     );
 
     println!();

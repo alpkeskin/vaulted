@@ -38,7 +38,7 @@ fn main() -> Result<(), Error> {
     // What comes back is exactly what went in -- normalization never touches
     // the stored value.
     let plaintext = vault.decrypt_str("users.email", &ciphertext)?;
-    println!("plaintext    {}", &*plaintext);
+    println!("plaintext    {}", *plaintext);
     assert_eq!(&*plaintext, "Alp@Example.com");
 
     // Encrypting the same value twice gives different ciphertext, so a dump
