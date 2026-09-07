@@ -20,13 +20,13 @@ pub(crate) fn encode(bytes: &[u8]) -> String {
 /// Decodes lowercase or uppercase hex. Rejects odd lengths and non-hex bytes.
 pub(crate) fn decode(s: &str) -> Result<Vec<u8>, BlindIndexError> {
     let bytes = s.as_bytes();
-    if bytes.is_empty() || bytes.len() % 2 != 0 {
+    if bytes.is_empty() || !bytes.len().is_multiple_of(2) {
         return Err(BlindIndexError::Malformed);
     }
     let mut out = Vec::with_capacity(bytes.len() / 2);
-    for pair in bytes.chunks_exact(2) {
-        let hi = nibble(pair[0])?;
-        let lo = nibble(pair[1])?;
+    for [high, low] in bytes.as_chunks::<2>().0 {
+        let hi = nibble(*high)?;
+        let lo = nibble(*low)?;
         out.push((hi << 4) | lo);
     }
     Ok(out)

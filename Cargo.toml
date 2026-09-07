@@ -14,8 +14,8 @@ exclude = ["fuzz"]
 [workspace.package]
 version = "0.1.0"
 edition = "2021"
-rust-version = "1.85"   # the highest MSRV among dependencies (zeroize, clap,
-                        # postgres-types)
+rust-version = "1.89"   # the highest MSRV among dependencies: aes-gcm 0.11
+                        # reaches aes 0.9, which declares 1.89
 license = "MIT"
 repository = "https://github.com/alpkeskin/vaulted"
 homepage = "https://github.com/alpkeskin/vaulted"
@@ -31,16 +31,16 @@ vaulted-core = { path = "crates/vaulted-core", version = "0.1.0" }
 vaulted-derive = { path = "crates/vaulted-derive", version = "0.1.0" }
 vaulted-postgres = { path = "crates/vaulted-postgres", version = "0.1.0", default-features = false }
 
-aes-gcm = { version = "0.10", default-features = false, features = ["aes", "alloc"] }
-chacha20poly1305 = { version = "0.10", default-features = false, features = ["alloc"] }
-hmac = { version = "0.12", default-features = false }
-sha2 = { version = "0.10", default-features = false }
-hkdf = { version = "0.12", default-features = false }
+aes-gcm = { version = "0.11", default-features = false, features = ["aes", "alloc"] }
+chacha20poly1305 = { version = "0.11", default-features = false, features = ["alloc"] }
+hmac = { version = "0.13", default-features = false }
+sha2 = { version = "0.11", default-features = false }
+hkdf = { version = "0.13", default-features = false }
 subtle = { version = "2", default-features = false }
 zeroize = { version = "1", default-features = false, features = ["alloc", "derive"] }
-getrandom = "0.2"
-base64 = { version = "0.22", default-features = false, features = ["alloc"] }
-thiserror = "1"
+getrandom = "0.4"
+base64 = { version = "0.23", default-features = false, features = ["alloc"] }
+thiserror = "2"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 clap = { version = "4", features = ["derive", "env"] }
@@ -51,12 +51,12 @@ bytes = "1"
 # Type impls only: no runtime, no TLS, no macros. Both live sqlx lines are
 # carried, because a trait impl is bound to the exact version that defines the
 # trait: linking one leaves users of the other with a feature that silently
-# does nothing. Each raises the Rust floor above the workspace's 1.85 — 1.88 for
-# 0.8, 1.94 for 0.9 — which is why both are optional and neither is default.
+# does nothing. sqlx 0.9 declares 1.94, above the workspace floor, which is why
+# both are optional and neither is default.
 sqlx-0_8 = { package = "sqlx", version = "0.8", default-features = false, features = ["postgres"] }
 sqlx-0_9 = { package = "sqlx", version = "0.9", default-features = false, features = ["postgres"] }
 
-syn = "2"
+syn = "3"
 quote = "1"
 proc-macro2 = "1"
 

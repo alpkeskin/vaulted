@@ -148,6 +148,25 @@ impl fmt::Debug for Nonce {
     }
 }
 
+/// Borrows nonce bytes as the fixed-size array the AEAD traits take.
+///
+/// The length was already checked against the algorithm, so the conversion
+/// only fails if that check was wrong.
+fn nonce_array<N: aes_gcm::aead::array::ArraySize>(
+    bytes: &[u8],
+) -> Result<&aes_gcm::aead::array::Array<u8, N>> {
+    bytes.try_into().map_err(|_| CryptoError::InvalidNonce)
+}
+
+/// Borrows tag bytes as the fixed-size array the AEAD traits take.
+fn tag_array<N: aes_gcm::aead::array::ArraySize>(
+    bytes: &[u8],
+) -> Result<&aes_gcm::aead::array::Array<u8, N>> {
+    bytes
+        .try_into()
+        .map_err(|_| CryptoError::MalformedCiphertext)
+}
+
 /// Encrypts `plaintext`, authenticating `aad` alongside it.
 ///
 /// Returns `ciphertext || tag`. The nonce is *not* included; the caller owns
@@ -168,28 +187,28 @@ pub fn seal(
 
     let tag = match algorithm {
         Algorithm::Aes256Gcm => {
-            use aes_gcm::aead::{AeadInPlace, KeyInit};
+            use aes_gcm::aead::{AeadInOut, KeyInit};
             let cipher = aes_gcm::Aes256Gcm::new_from_slice(key.expose_secret())
                 .map_err(|_| CryptoError::InvalidKeyLength)?;
             cipher
-                .encrypt_in_place_detached(
-                    aes_gcm::Nonce::from_slice(nonce.as_bytes()),
+                .encrypt_inout_detached(
+                    nonce_array(nonce.as_bytes())?,
                     aad,
-                    &mut buf,
+                    buf.as_mut_slice().into(),
                 )
                 .map_err(|_| CryptoError::AuthenticationFailed)?
                 .to_vec()
         }
         #[cfg(feature = "xchacha")]
         Algorithm::XChaCha20Poly1305 => {
-            use chacha20poly1305::aead::{AeadInPlace, KeyInit};
+            use chacha20poly1305::aead::{AeadInOut, KeyInit};
             let cipher = chacha20poly1305::XChaCha20Poly1305::new_from_slice(key.expose_secret())
                 .map_err(|_| CryptoError::InvalidKeyLength)?;
             cipher
-                .encrypt_in_place_detached(
-                    chacha20poly1305::XNonce::from_slice(nonce.as_bytes()),
+                .encrypt_inout_detached(
+                    nonce_array(nonce.as_bytes())?,
                     aad,
-                    &mut buf,
+                    buf.as_mut_slice().into(),
                 )
                 .map_err(|_| CryptoError::AuthenticationFailed)?
                 .to_vec()
@@ -229,29 +248,29 @@ pub fn open(
 
     match algorithm {
         Algorithm::Aes256Gcm => {
-            use aes_gcm::aead::{AeadInPlace, KeyInit};
+            use aes_gcm::aead::{AeadInOut, KeyInit};
             let cipher = aes_gcm::Aes256Gcm::new_from_slice(key.expose_secret())
                 .map_err(|_| CryptoError::InvalidKeyLength)?;
             cipher
-                .decrypt_in_place_detached(
-                    aes_gcm::Nonce::from_slice(nonce.as_bytes()),
+                .decrypt_inout_detached(
+                    nonce_array(nonce.as_bytes())?,
                     aad,
-                    buf.as_mut_slice(),
-                    aes_gcm::Tag::from_slice(tag),
+                    buf.as_mut_slice().into(),
+                    tag_array(tag)?,
                 )
                 .map_err(|_| CryptoError::AuthenticationFailed)?;
         }
         #[cfg(feature = "xchacha")]
         Algorithm::XChaCha20Poly1305 => {
-            use chacha20poly1305::aead::{AeadInPlace, KeyInit};
+            use chacha20poly1305::aead::{AeadInOut, KeyInit};
             let cipher = chacha20poly1305::XChaCha20Poly1305::new_from_slice(key.expose_secret())
                 .map_err(|_| CryptoError::InvalidKeyLength)?;
             cipher
-                .decrypt_in_place_detached(
-                    chacha20poly1305::XNonce::from_slice(nonce.as_bytes()),
+                .decrypt_inout_detached(
+                    nonce_array(nonce.as_bytes())?,
                     aad,
-                    buf.as_mut_slice(),
-                    chacha20poly1305::Tag::from_slice(tag),
+                    buf.as_mut_slice().into(),
+                    tag_array(tag)?,
                 )
                 .map_err(|_| CryptoError::AuthenticationFailed)?;
         }

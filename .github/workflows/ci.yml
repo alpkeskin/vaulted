@@ -74,12 +74,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@1.85.0
+      - uses: dtolnay/rust-toolchain@1.89.0
       - uses: Swatinem/rust-cache@v2
-      # Every feature except the sqlx ones, which have MSRVs of their own:
-      # sqlx 0.8 reaches url -> idna -> icu_*, which need Rust 1.88, and sqlx
-      # 0.9 declares 1.94. Enabling either here would test sqlx's floor rather
-      # than ours. See README.md.
+      # Every feature except sqlx-0_9, which declares 1.94 and would test
+      # sqlx's floor rather than ours. sqlx 0.8 needs 1.88, below this job's
+      # toolchain, so it is covered by the feature matrix. See README.md.
       - run: cargo check --workspace --all-targets
       - run: cargo check -p vaulted-core --features "derive,postgres,serde"
 

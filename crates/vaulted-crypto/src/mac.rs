@@ -1,6 +1,6 @@
 //! Message authentication, used by blind indexes.
 
-use hmac::{Hmac, Mac};
+use hmac::{Hmac, KeyInit, Mac};
 use sha2::Sha256;
 use zeroize::Zeroizing;
 
@@ -15,7 +15,7 @@ pub const HMAC_SHA256_LEN: usize = 32;
 /// it is derived from a plaintext, so the buffer is zeroized on drop to avoid
 /// leaving copies behind in memory the caller did not ask for.
 pub fn hmac_sha256(key: &SecretKey, message: &[u8]) -> Zeroizing<[u8; HMAC_SHA256_LEN]> {
-    let mut mac = <Hmac<Sha256> as Mac>::new_from_slice(key.expose_secret())
+    let mut mac = <Hmac<Sha256> as KeyInit>::new_from_slice(key.expose_secret())
         .expect("HMAC accepts keys of any length");
     mac.update(message);
     Zeroizing::new(mac.finalize().into_bytes().into())
