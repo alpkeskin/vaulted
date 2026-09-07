@@ -31,16 +31,16 @@ vaulted-core = { path = "crates/vaulted-core", version = "0.1.0" }
 vaulted-derive = { path = "crates/vaulted-derive", version = "0.1.0" }
 vaulted-postgres = { path = "crates/vaulted-postgres", version = "0.1.0", default-features = false }
 
-aes-gcm = { version = "0.10", default-features = false, features = ["aes", "alloc"] }
-chacha20poly1305 = { version = "0.10", default-features = false, features = ["alloc"] }
-hmac = { version = "0.12", default-features = false }
-sha2 = { version = "0.10", default-features = false }
-hkdf = { version = "0.12", default-features = false }
+aes-gcm = { version = "0.11", default-features = false, features = ["aes", "alloc"] }
+chacha20poly1305 = { version = "0.11", default-features = false, features = ["alloc"] }
+hmac = { version = "0.13", default-features = false }
+sha2 = { version = "0.11", default-features = false }
+hkdf = { version = "0.13", default-features = false }
 subtle = { version = "2", default-features = false }
 zeroize = { version = "1", default-features = false, features = ["alloc", "derive"] }
-getrandom = "0.2"
-base64 = { version = "0.22", default-features = false, features = ["alloc"] }
-thiserror = "1"
+getrandom = "0.4"
+base64 = { version = "0.23", default-features = false, features = ["alloc"] }
+thiserror = "2"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 clap = { version = "4", features = ["derive", "env"] }
@@ -56,7 +56,7 @@ bytes = "1"
 sqlx-0_8 = { package = "sqlx", version = "0.8", default-features = false, features = ["postgres"] }
 sqlx-0_9 = { package = "sqlx", version = "0.9", default-features = false, features = ["postgres"] }
 
-syn = "2"
+syn = "3"
 quote = "1"
 proc-macro2 = "1"
 
