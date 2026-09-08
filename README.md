@@ -276,7 +276,8 @@ Nonces, tags, serialization, key lookup and algorithm selection are internal.
 ## 🛠️ CLI
 
 ```sh
-cargo install --path crates/vaulted-cli      # installs `vaulted`
+cargo install vaulted-cli                    # installs a binary named `vaulted`
+cargo install --path crates/vaulted-cli      # or from a checkout
 
 vaulted init                                 # keyring at ./vaulted.keys.json, mode 0600
 vaulted status
